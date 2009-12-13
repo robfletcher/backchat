@@ -1,6 +1,6 @@
+- Comments can be embedded on a page
 - User can comment anonymously
-- Comments are ordered by date created (tz aware)
-- User time zone is respected when commenting
+- Comments can be paginated
 - User can authenticate via openid
 - User can authenticate via facebook connect
 - User can upload an avatar

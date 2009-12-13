@@ -1,10 +1,12 @@
 package backchat
 
-import static javax.servlet.http.HttpServletResponse.*
-import org.joda.time.DateTime
-import org.joda.time.DateTimeZone
+import backchat.Client
+import backchat.Document
+import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND
 
 class CommentController {
+
+	def commentService
 
 	def add = {AddCommentCommand command ->
 		if (command.hasErrors()) {
@@ -15,8 +17,7 @@ class CommentController {
 				}
 			}
 		} else {
-			def c = command.toComment()
-			c.save(failOnError: true)
+			def c = commentService.addComment(command)
 			render(contentType: "application/json") {
 				status = "OK"
 				comment = [id: c.id, nickname: c.nickname, text: c.text]
@@ -25,12 +26,12 @@ class CommentController {
 	}
 
 	def show = {
-		if (!params.id) {
-			response.sendError SC_NOT_FOUND
-		} else {
-			def document = Document.read(params.id)
+		def document = params.id ? Document.read(params.id) : null
+		if (document) {
 			def commentInstanceList = document.comments ?: []
 			return [commentInstanceList: commentInstanceList]
+		} else {
+			response.sendError SC_NOT_FOUND
 		}
 	}
 
@@ -38,24 +39,19 @@ class CommentController {
 
 class AddCommentCommand {
 
-	Document document
+	Client client
+	String documentUrl
 	String nickname
 	String email
 	String text
-	int timezoneOffsetMinutes
+	int timeZoneOffsetMinutes
 
 	static constraints = {
-		document nullable: false
+		client nullable: false
+		documentUrl nullable: false, blank: false
 		nickname nullable: false, blank: false
 		email nullable: false, blank: false, email: true
 		text nullable: false, blank: false
-	}
-
-	Comment toComment() {
-		int offsetHours = timezoneOffsetMinutes.intdiv(60)
-		int offsetMinutes = timezoneOffsetMinutes % 60
-		def tz = DateTimeZone.forOffsetHoursMinutes(offsetHours, offsetMinutes)
-		new Comment(document: document, nickname: nickname, email: email, text: text, timestamp: new DateTime().withZone(tz))
 	}
 
 }

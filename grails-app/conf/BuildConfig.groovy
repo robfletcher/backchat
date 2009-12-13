@@ -22,7 +22,7 @@ grails.project.dependency.resolution = {
 		//mavenRepo "http://repository.jboss.com/maven2/"
 	}
 	dependencies {
-//		test "junit:junit:4.7"
+		test "org.gmock:gmock:0.8.0"
 	}
 
 }
