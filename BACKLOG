@@ -1,0 +1,12 @@
+- User can comment anonymously
+- User can authenticate via openid
+- User can authenticate via facebook connect
+- User can upload an avatar
+- User can create profile information
+- Comment can be voted up or down
+- User has karma based on comment votes
+- User capabilities can be restriced by karma
+- Anonymous commenting can be disabled by client
+- Client has administrator users
+- Administrator users can post-moderate comments
+- Comments can be disabled per-document
