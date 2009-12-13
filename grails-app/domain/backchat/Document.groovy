@@ -14,6 +14,10 @@ class Document {
 		url blank: false, unique: "client"
     }
 
+	static mapping = {
+		comments sort: "timestamp"
+	}
+
 	boolean equals(o) {
 		if (this.is(o)) return true
 		if (!o || getClass() != o.getClass()) return false

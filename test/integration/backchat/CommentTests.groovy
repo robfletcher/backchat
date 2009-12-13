@@ -41,4 +41,19 @@ class CommentTests extends GroovyTestCase {
 
 		assertEquals comments.timestamp.sort(), comments.timestamp
 	}
+
+	void testCommentOrderingAppliesWhenGotFromDocument() {
+		Document.withSession {session ->
+			def now = new DateTime()
+			Comment.build(document: document, timestamp: now.minusWeeks(1))
+			Comment.build(document: document, timestamp: now.minusMonths(1))
+			Comment.build(document: document, timestamp: now.minusDays(1))
+			session.flush()
+			session.clear()
+		}
+
+		def comments = Document.read(document.id).comments
+
+		assertEquals comments.timestamp.sort(), comments.timestamp
+	}
 }
