@@ -11,6 +11,10 @@ class Client {
 		name blank: false, unique: true
     }
 
+	static mapping = {
+		id generator: "uuid"
+	}
+
 	boolean equals(o) {
 		if (this.is(o)) return true
 		if (!o || getClass() != o.getClass()) return false

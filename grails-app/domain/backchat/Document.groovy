@@ -15,6 +15,7 @@ class Document {
     }
 
 	static mapping = {
+		id generator: "uuid"
 		comments sort: "timestamp"
 	}
 

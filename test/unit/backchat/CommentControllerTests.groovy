@@ -2,8 +2,9 @@ package backchat
 
 import org.gmock.WithGMock
 import org.joda.time.DateTime
+import static java.util.Collections.*
 import static common.TestUtils.randomId
-import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND
+import static javax.servlet.http.HttpServletResponse.*
 
 @WithGMock
 class CommentControllerTests extends JsonControllerUnitTestCase {
@@ -27,11 +28,11 @@ class CommentControllerTests extends JsonControllerUnitTestCase {
 
 		def json = controller.response.contentAsJson
 		assertEquals "FAIL", json.status
-		assertTrue json.errors.contains("client: nullable")
-		assertTrue json.errors.contains("documentUrl: nullable")
-		assertTrue json.errors.contains("nickname: nullable")
-		assertTrue json.errors.contains("email: nullable")
-		assertTrue json.errors.contains("text: nullable")
+		assertTrue json.messages.contains("client: nullable")
+		assertTrue json.messages.contains("documentUrl: nullable")
+		assertTrue json.messages.contains("nickname: nullable")
+		assertTrue json.messages.contains("email: nullable")
+		assertTrue json.messages.contains("text: nullable")
 	}
 
 	void testAddAddsCommentToDocument() {
@@ -51,19 +52,28 @@ class CommentControllerTests extends JsonControllerUnitTestCase {
 		assertNotNull json.comment.id
 	}
 
-	void testShowRequiresDocumentId() {
+	void testShowRequiresClientId() {
 		controller.show()
 
-		assertEquals SC_NOT_FOUND, controller.response.status
+		assertEquals SC_UNAUTHORIZED, controller.response.status
 	}
 
-	void testShowSetsNotFoundIfInvalidDocumentSpecified() {
-		mockDomain Document
-		controller.params.id = randomId()
+	void testShowRequiresDocumentUrl() {
+		controller.params."client.id" = client.id
 
 		controller.show()
 
-		assertEquals SC_NOT_FOUND, controller.response.status
+		assertEquals SC_BAD_REQUEST, controller.response.status
+	}
+
+	void testShowReturnsEmptyListIfUnknownDocumentSpecified() {
+		mockDomain Document
+		controller.params."client.id" = client.id
+		controller.params.documentUrl = "http://aol.bv/"
+
+		def model = controller.show()
+
+		assertEquals EMPTY_LIST, model.commentInstanceList
 	}
 
 	void testShowRetrievesCommentsForASingleDocument() {
@@ -75,7 +85,8 @@ class CommentControllerTests extends JsonControllerUnitTestCase {
 			document2.addToComments new Comment(id: randomId(), document: document2, nickname: name, email: "$name@energizedwork.com", text: "Comment $i", timestamp: new DateTime())
 		}
 
-		controller.params.id = document1.id
+		controller.params."client.id" = client.id
+		controller.params.documentUrl = document1.url
 		def model = controller.show()
 
 		assertEquals 3, model.commentInstanceList.size()

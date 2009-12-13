@@ -2,7 +2,7 @@ package backchat
 
 import backchat.Client
 import backchat.Document
-import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND
+import static javax.servlet.http.HttpServletResponse.*
 
 class CommentController {
 
@@ -12,7 +12,7 @@ class CommentController {
 		if (command.hasErrors()) {
 			render(contentType: "application/json") {
 				status = "FAIL"
-				errors = command.errors.allErrors.collect {
+				messages = command.errors.allErrors.collect {
 					message error: it
 				}
 			}
@@ -26,15 +26,17 @@ class CommentController {
 	}
 
 	def show = {
-		def document = params.id ? Document.read(params.id) : null
-		if (document) {
-			def commentInstanceList = document.comments ?: []
-			return [commentInstanceList: commentInstanceList]
+		def client = params."client.id" ? Client.read(params."client.id") : null
+		if (!client) {
+			response.sendError SC_UNAUTHORIZED
+		} else if (!params.documentUrl) {
+			response.sendError SC_BAD_REQUEST
 		} else {
-			response.sendError SC_NOT_FOUND
+			def document = Document.findByClientAndUrl(client, params.documentUrl)
+			def commentInstanceList = document?.comments ?: []
+			return [commentInstanceList: commentInstanceList]
 		}
 	}
-
 }
 
 class AddCommentCommand {

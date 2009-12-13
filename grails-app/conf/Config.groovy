@@ -44,7 +44,6 @@ grails.spring.bean.packages = []
 
 grails.gorm.default.mapping = {
 	cache true
-	id generator: "uuid"
 }
 
 // set per-environment serverURL stem for creating absolute links

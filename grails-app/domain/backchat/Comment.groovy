@@ -21,6 +21,7 @@ class Comment {
     }
 
 	static mapping = {
+		id generator: "uuid"
 		timestamp type: PersistentDateTime
 		sort "timestamp"
 	}
