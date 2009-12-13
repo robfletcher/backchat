@@ -1,6 +1,7 @@
 - Comments can be embedded on a page
 - User can comment anonymously
 - Comments can be paginated
+- When refreshing comments, can append only new ones instead of reloading all
 - User can authenticate via openid
 - User can authenticate via facebook connect
 - User can upload an avatar

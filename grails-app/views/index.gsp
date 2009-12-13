@@ -107,54 +107,5 @@
 				</ul>
 			</div>
 		</div>
-
-		<div>
-			<g:set var="clientId" value="${Client.findByName('localhost').id}"/>
-			<g:set var="documentUrl" value="http://localhost:8080${request.requestURI}"/>
-			<g:javascript>
-			function commentSuccess(transport) {
-				var json = transport.responseText.evalJSON();
-				var status = json.status;
-				if (status == "OK") {
-					loadComments();
-				} else {
-					var messages = "";
-					for (var i = 0; i < json.messages.length; i++) {
-						if (i > 0) messages += "\n";
-						messages += json.messages[i];
-					}
-					alert(messages);
-				}
-			}
-
-			function loadComments() {
-				new Ajax.Updater("comments", "${createLink(controller: 'comment', action: 'show')}", {
-					parameters: { "client.id": "${clientId}", documentUrl: "${documentUrl}" }
-				});
-			}
-
-			Event.observe(window, "load", loadComments);
-			</g:javascript>
-			<fieldset>
-				<legend>Add a comment</legend>
-				<g:formRemote name="commentForm" url="[controller:'comment', action:'add']" onSuccess="commentSuccess(e)">
-					<g:hiddenField name="client.id" value="${clientId}"/>
-					<g:hiddenField name="documentUrl" value="${documentUrl}"/>
-					<div class="formField">
-						<label for="nickname">Nickname:</label>
-						<input type="text" id="nickname" name="nickname"/>
-					</div>
-					<div class="formField">
-						<label for="email">Email:</label>
-						<input type="text" id="email" name="email"/>
-					</div>
-					<div class="formField">
-						<textarea id="text" name="text" cols="80" rows="10"></textarea>
-					</div>
-					<input type="submit" value="Add Comment"/>
-				</g:formRemote>
-			</fieldset>
-			<div id="comments"></div>
-		</div>
 	</body>
 </html>

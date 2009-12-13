@@ -1,0 +1,66 @@
+#commentForm {
+	clear: both;
+	margin: 0 20px;
+	width: 600px;
+}
+#commentForm fieldset {
+	border: 1px solid #ccc;
+	margin: 1em;
+}
+#commentForm legend {
+	font-size: 125%;
+	font-weight: bold;
+}
+#commentForm .prop {
+    margin: 0;
+}
+#commentForm label {
+    display: inline-block;
+    margin-right: 1.5em;
+	position: relative;
+    text-align: right;
+    width: 8em;
+}
+#commentForm label .mandatory {
+    color: #c00;
+    position: absolute;
+    right: -1.25em;
+}
+#commentForm input, select {
+    vertical-align: middle;
+}
+#commentForm textarea {
+    vertical-align: top;
+}
+#commentForm #nickname {
+	width: 12em;
+}
+#commentForm #email {
+	width: 24em;
+}
+#commentForm #text {
+	height: 50px;
+	width: 552px;
+}
+#commentForm .buttons {
+	text-align: right;
+}
+
+#comments {
+	margin: 0 20px 20px 20px;
+	width: 600px;
+}
+#comments .comment {
+	border: 1px solid #ccc;
+	margin: 1em;
+	padding: 0.25em 0.5em;
+}
+#comments .odd {
+	background-color: #eee;
+}
+#comments .nickname {
+	font-weight: bold;
+}
+#comments .timestamp {
+	color: #666;
+}
