@@ -2,14 +2,16 @@ package backchat
 
 class Comment {
 
-	User commenter
+	String nickname
+	String email
 	String text
 
 	static belongsTo = [document: Document]
 
     static constraints = {
 		document()
-		commenter()
+		nickname blank: false
+		email blank: false, email: true
 		text blank: false
     }
 }
