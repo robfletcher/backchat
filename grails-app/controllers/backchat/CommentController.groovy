@@ -1,6 +1,7 @@
 package backchat
 
 import static javax.servlet.http.HttpServletResponse.*
+import org.joda.time.DateTime
 
 class CommentController {
 
@@ -49,7 +50,7 @@ class AddCommentCommand {
 	}
 
 	Comment toComment() {
-		new Comment(document: document, nickname: nickname, email: email, text: text)
+		new Comment(document: document, nickname: nickname, email: email, text: text, timestamp: new DateTime())
 	}
 
 }
