@@ -5,6 +5,7 @@ import org.joda.time.contrib.hibernate.PersistentDateTime
 
 class Comment {
 
+	String id
 	String nickname
 	String email
 	String text
@@ -21,5 +22,6 @@ class Comment {
 
 	static mapping = {
 		timestamp type: PersistentDateTime
+		sort "timestamp"
 	}
 }

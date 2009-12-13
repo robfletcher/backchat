@@ -2,6 +2,7 @@ package backchat
 
 class Document {
 
+	String id
 	String name
 	String url
 

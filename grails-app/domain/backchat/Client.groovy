@@ -2,6 +2,7 @@ package backchat
 
 class Client {
 
+	String id
 	String name
 
 	static hasMany = [documents: Document]

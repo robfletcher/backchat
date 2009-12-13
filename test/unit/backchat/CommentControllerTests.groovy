@@ -5,12 +5,11 @@ import grails.test.ControllerUnitTestCase
 import grails.web.JSONBuilder
 import groovy.xml.StreamingMarkupBuilder
 import org.codehaus.groovy.grails.web.converters.configuration.ConvertersConfigurationInitializer
-import org.springframework.mock.web.MockHttpServletResponse
-import javax.servlet.http.HttpServletResponse
-import static javax.servlet.http.HttpServletResponse.*
 import org.joda.time.DateTime
-import org.joda.time.DateTimeZone
 import org.joda.time.DateTimeUtils
+import org.joda.time.DateTimeZone
+import org.springframework.mock.web.MockHttpServletResponse
+import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND
 
 class CommentControllerTests extends ControllerUnitTestCase {
 
@@ -22,8 +21,8 @@ class CommentControllerTests extends ControllerUnitTestCase {
 
 		mockCommandObject AddCommentCommand
 
-		client = new Client(name: "Grails.org")
-		document = new Document(client: client, name: "Home Page", url: "http://grails.org/")
+		client = new Client(id: randomId(), name: "Grails.org")
+		document = new Document(id: randomId(), client: client, name: "Home Page", url: "http://grails.org/")
 
 		mockDomain Client, [client]
 		mockDomain Document, [document]
@@ -71,6 +70,10 @@ class CommentControllerTests extends ControllerUnitTestCase {
 		}
 
 		new ConvertersConfigurationInitializer().initialize()
+	}
+
+	private static String randomId() {
+		return UUID.randomUUID() as String
 	}
 
 	void tearDown() {
@@ -130,14 +133,14 @@ class CommentControllerTests extends ControllerUnitTestCase {
 
 	void testShowRetrievesCommentsForASingleDocument() {
 		["blackbeard", "roundhouse", "ponytail"].eachWithIndex {name, i ->
-			def comment = new Comment(document: document, nickname: name, email: "$name@energizedwork.com", text: "Comment $i", timestamp: new DateTime())
+			def comment = new Comment(id: randomId(), document: document, nickname: name, email: "$name@energizedwork.com", text: "Comment $i", timestamp: new DateTime())
 			assert comment.save()
 			document.addToComments comment
 		}
 
-		def document2 = new Document(client: client, name: "Download Page", url: "http://grails.org/Download")
-		assert document2.save(), document2.errors.allErrors.collect {"$it.field: $it.code" }.join("\n")
-		assert new Comment(document: document2, nickname: "blackbeard", email: "blackbeard@energizedwork.com", text: "Comment on other document", timestamp: new DateTime()).save()
+		def document2 = new Document(id: randomId(), client: client, name: "Download Page", url: "http://grails.org/Download")
+		assert document2.save()
+		assert new Comment(id: randomId(), document: document2, nickname: "blackbeard", email: "blackbeard@energizedwork.com", text: "Comment on other document", timestamp: new DateTime()).save()
 
 		controller.params.id = document.id
 		def model = controller.show()
