@@ -1,8 +1,12 @@
 package backchat
 
+import static javax.servlet.http.HttpServletResponse.*
+import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
+
 class CommentController {
 
-	def addComment = {AddCommentCommand command ->
+	def add = {AddCommentCommand command ->
 		if (command.hasErrors()) {
 			render(contentType: "application/json") {
 				status = "FAIL"
@@ -20,6 +24,16 @@ class CommentController {
 		}
 	}
 
+	def show = {
+		if (!params.id) {
+			response.sendError SC_NOT_FOUND
+		} else {
+			def document = Document.read(params.id)
+			def commentInstanceList = document.comments ?: []
+			return [commentInstanceList: commentInstanceList]
+		}
+	}
+
 }
 
 class AddCommentCommand {
@@ -28,6 +42,7 @@ class AddCommentCommand {
 	String nickname
 	String email
 	String text
+	int timezoneOffsetMinutes
 
 	static constraints = {
 		document nullable: false
@@ -37,7 +52,10 @@ class AddCommentCommand {
 	}
 
 	Comment toComment() {
-		new Comment(document: document, nickname: nickname, email: email, text: text)
+		int offsetHours = timezoneOffsetMinutes.intdiv(60)
+		int offsetMinutes = timezoneOffsetMinutes % 60
+		def tz = DateTimeZone.forOffsetHoursMinutes(offsetHours, offsetMinutes)
+		new Comment(document: document, nickname: nickname, email: email, text: text, timestamp: new DateTime().withZone(tz))
 	}
 
 }
