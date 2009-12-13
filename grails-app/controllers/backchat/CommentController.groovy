@@ -1,8 +1,10 @@
 package backchat
 
+import static javax.servlet.http.HttpServletResponse.*
+
 class CommentController {
 
-	def addComment = {AddCommentCommand command ->
+	def add = {AddCommentCommand command ->
 		if (command.hasErrors()) {
 			render(contentType: "application/json") {
 				status = "FAIL"
@@ -17,6 +19,16 @@ class CommentController {
 				status = "OK"
 				comment = [id: c.id, nickname: c.nickname, text: c.text]
 			}
+		}
+	}
+
+	def show = {
+		if (!params.id) {
+			response.sendError SC_NOT_FOUND
+		} else {
+			def document = Document.read(params.id)
+			def commentInstanceList = document.comments ?: []
+			return [commentInstanceList: commentInstanceList]
 		}
 	}
 

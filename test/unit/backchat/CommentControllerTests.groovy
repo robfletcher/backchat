@@ -6,6 +6,8 @@ import grails.web.JSONBuilder
 import groovy.xml.StreamingMarkupBuilder
 import org.codehaus.groovy.grails.web.converters.configuration.ConvertersConfigurationInitializer
 import org.springframework.mock.web.MockHttpServletResponse
+import javax.servlet.http.HttpServletResponse
+import static javax.servlet.http.HttpServletResponse.*
 
 class CommentControllerTests extends ControllerUnitTestCase {
 
@@ -18,7 +20,7 @@ class CommentControllerTests extends ControllerUnitTestCase {
 		mockCommandObject AddCommentCommand
 
 		client = new Client(name: "Grails.org")
-		document = new Document(client: client, name: "Homepage", url: "http://grails.org/")
+		document = new Document(client: client, name: "Home Page", url: "http://grails.org/")
 
 		mockDomain Client, [client]
 		mockDomain Document, [document]
@@ -68,11 +70,11 @@ class CommentControllerTests extends ControllerUnitTestCase {
 		new ConvertersConfigurationInitializer().initialize()
 	}
 
-	void testAddCommentFailsWhenCommandInvalid() {
+	void testAddFailsWhenCommandInvalid() {
 		def command = new AddCommentCommand()
 		assertFalse command.validate()
 
-		controller.addComment(command)
+		controller.add(command)
 
 		def json = controller.response.contentAsJson
 		assertEquals "FAIL", json.status
@@ -82,11 +84,11 @@ class CommentControllerTests extends ControllerUnitTestCase {
 		assertTrue json.errors.contains("text: nullable")
 	}
 
-	void testAddCommentAddsCommentToDocument() {
+	void testAddAddsCommentToDocument() {
 		def command = new AddCommentCommand(document: document, nickname: "blackbeard", email: "blackbeard@energizedwork.com", text: "This thread sucks!")
 		assertTrue command.validate()
 
-		controller.addComment(command)
+		controller.add(command)
 
 		def json = controller.response.contentAsJson
 		assertEquals "OK", json.status
@@ -101,4 +103,29 @@ class CommentControllerTests extends ControllerUnitTestCase {
 		assertEquals command.text, comment.text
 	}
 
+	void testShowRequiresDocumentId() {
+		controller.show()
+
+		assertEquals SC_NOT_FOUND, controller.response.status
+	}
+
+	void testShowRetrievesCommentsForASingleDocument() {
+		["blackbeard", "roundhouse", "ponytail"].eachWithIndex { name, i ->
+			def comment = new Comment(document: document, nickname: name, email: "$name@energizedwork.com", text: "Comment $i")
+			assert comment.save()
+			document.addToComments comment
+		}
+
+		def document2 = new Document(client: client, name: "Download Page", url: "http://grails.org/Download")
+		assert document2.save(), document2.errors.allErrors.collect {"$it.field: $it.code" }.join("\n")
+		assert new Comment(document: document2, nickname: "blackbeard", email: "blackbeard@energizedwork.com", text: "Comment on other document").save()
+
+		controller.params.id = document.id
+		def model = controller.show()
+
+		assertEquals 3, model.commentInstanceList.size()
+		assertTrue model.commentInstanceList.every {
+			it.document == document
+		}
+	}
 }
