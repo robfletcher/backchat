@@ -2,6 +2,7 @@ package backchat
 
 import static javax.servlet.http.HttpServletResponse.*
 import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
 
 class CommentController {
 
@@ -41,6 +42,7 @@ class AddCommentCommand {
 	String nickname
 	String email
 	String text
+	int timezoneOffsetMinutes
 
 	static constraints = {
 		document nullable: false
@@ -50,7 +52,10 @@ class AddCommentCommand {
 	}
 
 	Comment toComment() {
-		new Comment(document: document, nickname: nickname, email: email, text: text, timestamp: new DateTime())
+		int offsetHours = timezoneOffsetMinutes.intdiv(60)
+		int offsetMinutes = timezoneOffsetMinutes % 60
+		def tz = DateTimeZone.forOffsetHoursMinutes(offsetHours, offsetMinutes)
+		new Comment(document: document, nickname: nickname, email: email, text: text, timestamp: new DateTime().withZone(tz))
 	}
 
 }

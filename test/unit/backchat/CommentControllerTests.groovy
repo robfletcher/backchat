@@ -9,6 +9,8 @@ import org.springframework.mock.web.MockHttpServletResponse
 import javax.servlet.http.HttpServletResponse
 import static javax.servlet.http.HttpServletResponse.*
 import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
+import org.joda.time.DateTimeUtils
 
 class CommentControllerTests extends ControllerUnitTestCase {
 
@@ -71,6 +73,11 @@ class CommentControllerTests extends ControllerUnitTestCase {
 		new ConvertersConfigurationInitializer().initialize()
 	}
 
+	void tearDown() {
+		DateTimeUtils.setCurrentMillisSystem()
+		super.tearDown()
+	}
+
 	void testAddFailsWhenCommandInvalid() {
 		def command = new AddCommentCommand()
 		assertFalse command.validate()
@@ -104,6 +111,17 @@ class CommentControllerTests extends ControllerUnitTestCase {
 		assertEquals command.text, comment.text
 	}
 
+	void testAddTimestampsCommentAccordingToUserTimezone() {
+		DateTimeUtils.currentMillisFixed = System.currentTimeMillis()
+		def command = new AddCommentCommand(document: document, nickname: "blackbeard", email: "blackbeard@energizedwork.com", text: "This thread sucks!", timezoneOffsetMinutes: -8 * 60)
+		assertTrue command.validate()
+
+		controller.add(command)
+
+		def comment = Comment.get(controller.response.contentAsJson.comment.id)
+		assertEquals new DateTime().withZone(DateTimeZone.forID("America/Vancouver")), comment.timestamp
+	}
+
 	void testShowRequiresDocumentId() {
 		controller.show()
 
@@ -111,7 +129,7 @@ class CommentControllerTests extends ControllerUnitTestCase {
 	}
 
 	void testShowRetrievesCommentsForASingleDocument() {
-		["blackbeard", "roundhouse", "ponytail"].eachWithIndex { name, i ->
+		["blackbeard", "roundhouse", "ponytail"].eachWithIndex {name, i ->
 			def comment = new Comment(document: document, nickname: name, email: "$name@energizedwork.com", text: "Comment $i", timestamp: new DateTime())
 			assert comment.save()
 			document.addToComments comment
