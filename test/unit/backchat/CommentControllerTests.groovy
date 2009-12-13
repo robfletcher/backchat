@@ -1,11 +1,11 @@
 package backchat
 
+import grails.converters.JSON
 import grails.test.ControllerUnitTestCase
+import grails.web.JSONBuilder
 import groovy.xml.StreamingMarkupBuilder
 import org.codehaus.groovy.grails.web.converters.configuration.ConvertersConfigurationInitializer
-import grails.web.JSONBuilder
 import org.springframework.mock.web.MockHttpServletResponse
-import grails.converters.JSON
 
 class CommentControllerTests extends ControllerUnitTestCase {
 
@@ -77,21 +77,21 @@ class CommentControllerTests extends ControllerUnitTestCase {
 		def json = controller.response.contentAsJson
 		assertEquals "FAIL", json.status
 		assertTrue json.errors.contains("document: nullable")
-		assertTrue json.errors.contains("client: nullable")
 		assertTrue json.errors.contains("nickname: nullable")
 		assertTrue json.errors.contains("email: nullable")
 		assertTrue json.errors.contains("text: nullable")
 	}
 
 	void testAddCommentAddsCommentToDocument() {
-		def command = new AddCommentCommand(client: client, document: document, nickname: "blackbeard", email: "blackbeard@energizedwork.com", text: "This thread sucks!")
+		def command = new AddCommentCommand(document: document, nickname: "blackbeard", email: "blackbeard@energizedwork.com", text: "This thread sucks!")
 		assertTrue command.validate()
 
 		controller.addComment(command)
 
-		println controller.response.contentAsString
 		def json = controller.response.contentAsJson
 		assertEquals "OK", json.status
+		assertEquals command.nickname, json.comment.nickname
+		assertEquals command.text, json.comment.text
 		def commentId = json.comment.id
 
 		def comment = Comment.get(commentId)
@@ -99,7 +99,6 @@ class CommentControllerTests extends ControllerUnitTestCase {
 		assertEquals command.nickname, comment.nickname
 		assertEquals command.email, comment.email
 		assertEquals command.text, comment.text
-
 	}
 
 }

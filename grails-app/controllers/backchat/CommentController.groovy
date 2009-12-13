@@ -15,10 +15,7 @@ class CommentController {
 			c.save(failOnError: true)
 			render(contentType: "application/json") {
 				status = "OK"
-				comment = [id: c.id
-					,nickname: c.nickname
-					,text: c.text
-				]
+				comment = [id: c.id, nickname: c.nickname, text: c.text]
 			}
 		}
 	}
@@ -27,14 +24,12 @@ class CommentController {
 
 class AddCommentCommand {
 
-	Client client
 	Document document
 	String nickname
 	String email
 	String text
 
 	static constraints = {
-		client nullable: false
 		document nullable: false
 		nickname nullable: false, blank: false
 		email nullable: false, blank: false, email: true
