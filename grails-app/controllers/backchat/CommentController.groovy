@@ -12,8 +12,8 @@ class CommentController {
 		if (command.hasErrors()) {
 			render(contentType: "application/json") {
 				status = "FAIL"
-				messages = command.errors.allErrors.collect {
-					message error: it
+				delegate.errors = command.errors.allErrors.collect {
+					[field: it.field, message: message(error: it)]
 				}
 			}
 		} else {

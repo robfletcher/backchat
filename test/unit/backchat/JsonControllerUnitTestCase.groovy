@@ -14,9 +14,7 @@ abstract class JsonControllerUnitTestCase extends ControllerUnitTestCase {
 
 		controller.metaClass {
 			// wire message taglib onto controller
-			message = {attrs ->
-				"$attrs.error.field: $attrs.error.code"
-			}
+			message = {attrs -> attrs.error.code }
 
 			// handle render(contentType: "application/json")
 			render = {Map map, Closure c ->

@@ -32,6 +32,9 @@
 #commentForm textarea {
     vertical-align: top;
 }
+#commentForm .error {
+	border-color: #c00;
+}
 #commentForm #nickname {
 	width: 12em;
 }

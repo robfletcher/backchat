@@ -22,7 +22,7 @@
 			<g:set var="documentUrl" value="http://localhost:8080${request.requestURI}"/>
 			<fieldset>
 				<legend>Add a comment</legend>
-				<g:formRemote name="addComment" url="[controller:'comment', action:'add']" onSuccess="commentSuccess(e)">
+				<g:formRemote name="addComment" url="[controller:'comment', action:'add']" onSuccess="commentSuccess(e)" onCreate="clearErrors()">
 					<g:hiddenField name="client.id" value="${clientId}"/>
 					<g:hiddenField name="documentUrl" value="${documentUrl}"/>
 					<div class="prop">

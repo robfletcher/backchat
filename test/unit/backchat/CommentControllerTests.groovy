@@ -28,11 +28,10 @@ class CommentControllerTests extends JsonControllerUnitTestCase {
 
 		def json = controller.response.contentAsJson
 		assertEquals "FAIL", json.status
-		assertTrue json.messages.contains("client: nullable")
-		assertTrue json.messages.contains("documentUrl: nullable")
-		assertTrue json.messages.contains("nickname: nullable")
-		assertTrue json.messages.contains("email: nullable")
-		assertTrue json.messages.contains("text: nullable")
+		assertTrue json.errors.contains([field: "client", message: "nullable"])
+		assertTrue json.errors.contains([field: "documentUrl", message: "nullable"])
+		assertTrue json.errors.contains([field: "email", message: "nullable"])
+		assertTrue json.errors.contains([field: "text", message: "nullable"])
 	}
 
 	void testAddAddsCommentToDocument() {
