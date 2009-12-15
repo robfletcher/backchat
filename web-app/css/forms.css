@@ -1,0 +1,91 @@
+/*
+ * Consistent cross-browser font size.
+ * Based on http://www.codecouch.com/2007/04/how-to-get-consistent-font-sizes-across-all-browsers/
+ */
+html>body {
+    font-size: 11px;
+    #font-size : 68 %;
+}
+
+body {
+    #font-size : 68 %;
+}
+
+/* FORM CONTAINERS */
+fieldset {
+    border: 1px solid #ccc;
+    margin: 1em 0;
+    padding: .5em 1em;
+}
+
+legend {
+    color: #006dba;
+    font-weight: normal;
+    font-size: 120%;
+    padding: 0 .5em;
+}
+
+/* FORM INPUT LABELS */
+fieldset .prop {
+    clear: both;
+    margin: 1em 0;
+    padding: 0;
+}
+
+label {
+    display: inline-block;
+    position: relative;
+    text-align: right;
+    width: 8em;
+    margin-right: 1.5em;
+}
+
+.mandatory .indicator {
+    color: #cc0000;
+    position: absolute;
+    right: -1.25em;
+}
+
+/* FORM INPUTS */
+fieldset input, fieldset select, fieldset textarea {
+    margin: 0;
+}
+
+fieldset input, fieldset select {
+    vertical-align: middle;
+}
+
+/* setting border on some inputs (e.g. checkboxes in Opera) causes problems so try to limit just to text boxes */
+fieldset input[type='text'], fieldset select, fieldset textarea {
+    background-color: #fcfcfc;
+    border: 1px solid #ccc;
+    padding: 2px 4px;
+}
+
+fieldset input[type='text']:focus, fieldset select:focus, fieldset textarea:focus {
+    border: 1px solid #b2d1ff;
+}
+
+select {
+    padding: 2px 2px 2px 0;
+}
+
+textarea {
+    vertical-align: top;
+}
+
+/* FORM FIELDS WITH AN ERROR */
+.error label {
+    color: #cc0000;
+}
+
+.error input[type='text'], .error select, .error textarea {
+    background: #fff3f3;
+    border: 1px solid #cc0000;
+}
+
+/* hack for IE as it won't recognize the CSS3 selector on the previous rule */
+.error input {
+    *background: #fff3f3;
+    *border: 1px solid #cc0000;
+}
