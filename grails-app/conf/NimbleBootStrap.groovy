@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
- 
+
 
 import intient.nimble.InstanceGenerator
 
@@ -34,7 +34,7 @@ import intient.nimble.service.UserService
 class NimbleBootStrap {
 
   def grailsApplication
-  
+
   def nimbleService
   def userService
   def adminsService
@@ -97,4 +97,4 @@ class NimbleBootStrap {
   private internalBootStap(def servletContext) {
     nimbleService.init()
   }
-} 
+}

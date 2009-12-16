@@ -36,18 +36,19 @@ nimble {
 
     facebook {
         federationprovider {
-            enabled = false
-            autoprovision = false
+            enabled = true
+            autoprovision = true
         }
 
         apikey = ""
         secretkey = ""
+        //glenn.saqui@bskyb.com/testingapi9
     }
 
     openid {
         federationprovider {
-            enabled = false
-            autoprovision = false
+            enabled = true
+            autoprovision = true
         }
     }
 
